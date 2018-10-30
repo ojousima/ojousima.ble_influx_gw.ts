@@ -62,3 +62,6 @@ typings/
 
 # Compiled typescript
 /lib
+
+# User configuration
+config.ts
