@@ -1,6 +1,6 @@
-import { FieldType, IPoint, ISingleHostConfig } from "influx";
-import { BatteryBroadcast }  from "ojousima.ruuvi_endpoints.ts"
-import { InfluxLogin }  from "../config"
+import { FieldType, IPoint, ISingleHostConfig } from 'influx';
+import { BatteryBroadcast } from 'ojousima.ruuvi_endpoints.ts';
+import { InfluxLogin } from '../config';
 
 const login = new InfluxLogin();
 const measurementName = 'Battery';
@@ -10,27 +10,25 @@ export const BatteryOptions: ISingleHostConfig = {
   host: login.host,
   password: login.password,
   port: login.port,
-  schema: [{
-    fields: {
-      droopVoltageV:             FieldType.FLOAT,
-      humidityRH:                FieldType.FLOAT,
-      measurementSequenceNumber: FieldType.INTEGER,
-      radioVoltageV:             FieldType.FLOAT,
-      rssi:                      FieldType.INTEGER,
-      simpleVoltageV:            FieldType.FLOAT,
-      temperatureC:              FieldType.FLOAT,
+  schema: [
+    {
+      fields: {
+        droopVoltageV: FieldType.FLOAT,
+        humidityRH: FieldType.FLOAT,
+        measurementSequenceNumber: FieldType.INTEGER,
+        radioVoltageV: FieldType.FLOAT,
+        rssi: FieldType.INTEGER,
+        simpleVoltageV: FieldType.FLOAT,
+        temperatureC: FieldType.FLOAT,
+      },
+      measurement: measurementName,
+      tags: ['gatewayID', 'address'],
     },
-    measurement: measurementName,
-    tags: [
-     'gatewayID',
-     'address'
-    ]
-  }],
-  username: login.username
-}
+  ],
+  username: login.username,
+};
 
-export function BroadcastToInflux(broadcast: BatteryBroadcast): IPoint
-{
+export function BroadcastToInflux(broadcast: BatteryBroadcast): IPoint {
   const data: IPoint = {
     fields: {
       droopVoltageV: broadcast.droopVoltageV,
@@ -38,12 +36,10 @@ export function BroadcastToInflux(broadcast: BatteryBroadcast): IPoint
       measurementSequenceNumber: broadcast.measurementSequence,
       radioVoltageV: broadcast.radioVoltageV,
       simpleVoltageV: broadcast.simpleVoltageV,
-      temperatureC: broadcast.temperatureC
+      temperatureC: broadcast.temperatureC,
     },
     measurement: measurementName,
-    tags: {
-
-    }
+    tags: {},
   };
 
   return data;
