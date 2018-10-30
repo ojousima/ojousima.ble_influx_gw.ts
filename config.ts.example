@@ -1,4 +1,4 @@
-import { ISingleHostConfig, } from "influx";
+import { ISingleHostConfig } from "influx";
 
 export class InfluxLogin {
   public readonly host: string;
