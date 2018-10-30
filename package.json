@@ -1,0 +1,49 @@
+{
+  "name": "ojousima.ble_influx_gw",
+  "version": "0.0.1",
+  "description": "Read BLE advertisements, parse data and relay data to InfluxDB",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "dependencies": {
+    "@types/noble": "0.0.37",
+    "influx": "^5.0.7",
+    "noble": "github:ojousima/noble#fix-xpc",
+    "ojousima.ruuvi_endpoints.ts": "^3.2.1",
+    "os": "^0.1.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.8",
+    "jest": "^23.6.0",
+    "prettier": "^1.14.3",
+    "ts-jest": "^23.10.4",
+    "tslint": "^5.11.0",
+    "tslint-config-prettier": "^1.15.0",
+    "typescript": "^3.1.4"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ojousima/ojousima.ble_influx_gw.ts.git"
+  },
+  "keywords": [
+    "Ruuvi",
+    "InfluxDB",
+    "Grafana"
+  ],
+  "author": "Otso Jousimaa",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/ojousima/ojousima.ble_influx_gw.ts/issues"
+  },
+  "homepage": "https://github.com/ojousima/ojousima.ble_influx_gw.ts#readme"
+}
