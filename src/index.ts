@@ -9,17 +9,16 @@ const batteryDB = new Influx(BatteryOptions);
 batteryDB.getDatabaseNames().then(names => {
   const dbname: string = BatteryOptions.database ? BatteryOptions.database : 'misc';
   if (0 > names.indexOf(dbname)) {
-    return batteryDB.createDatabase(dbname); 
-  } 
+    return batteryDB.createDatabase(dbname);
+  }
 });
 
 // Setup scanning
 Noble.on('stateChange', state => {
   if (state !== 'poweredOn') {
     Noble.stopScanning();
-  } 
-  else {
-    Noble.startScanning([], true); 
+  } else {
+    Noble.startScanning([], true);
   }
 });
 
@@ -34,7 +33,9 @@ Noble.on('discover', peripheral => {
   const rssi = peripheral.rssi;
   const timestamp = Date.now();
 
-  if(undefined === manufacturerData) { return; }
+  if (undefined === manufacturerData) {
+    return;
+  }
 
   // Parse manufacturer ID
   const view = new DataView(manufacturerData.buffer);
