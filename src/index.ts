@@ -34,7 +34,7 @@ Noble.on('discover', peripheral => {
   const rssi = peripheral.rssi;
   const timestamp = Date.now();
 
-  if(undefined == manufacturerData) { return; }
+  if(undefined === manufacturerData) { return; }
 
   // Parse manufacturer ID
   const view = new DataView(manufacturerData.buffer);
@@ -60,7 +60,7 @@ Noble.on('discover', peripheral => {
         sample.fields.rssi = rssi;
         const tx: IPoint[] = [sample];
         batteryDB.writePoints(tx);
-      } catch (e) {console.log(e);}
+      } catch (e) {}
     }
   }
 });
