@@ -1,6 +1,6 @@
 {
   "name": "ojousima.ble_influx_gw",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Read BLE advertisements, parse data and relay data to InfluxDB",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
