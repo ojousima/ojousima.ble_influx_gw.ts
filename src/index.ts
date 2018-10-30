@@ -1,8 +1,9 @@
 import { FieldType, InfluxDB as Influx, IPoint , ISingleHostConfig} from "influx";
-import { BatteryBroadcast, dfbaparser }  from "ojousima.ruuvi_endpoints.ts"
-import { BatteryOptions, BroadcastToInflux} from "./batterydata"
-import * as os from "os"
 import * as Noble from "noble"
+import { BatteryBroadcast, dfbaparser }  from "ojousima.ruuvi_endpoints.ts"
+import * as os from "os"
+import { BatteryOptions, BroadcastToInflux} from "./batterydata"
+
 
 // Setup database connection
 const batteryDB = new Influx(BatteryOptions);
@@ -53,11 +54,13 @@ Noble.on('discover', peripheral => {
         const BatteryData: BatteryBroadcast = dfbaparser(data);
         const sample: IPoint = BroadcastToInflux(BatteryData);
         if(undefined === sample.tags) { sample.tags = {}; }
+        if(undefined === sample.fields) { sample.fields = {}; }
         sample.tags.gatewayID = os.hostname();
         sample.tags.hostname  = id;
+        sample.fields.rssi = rssi;
         const tx: IPoint[] = [sample];
         batteryDB.writePoints(tx);
-      }catch(e);
+      }catch(e){};
     }
 
   }

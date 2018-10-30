@@ -1,6 +1,6 @@
-import { InfluxLogin }  from "../config"
-import { FieldType, ISingleHostConfig, IPoint } from "influx";
+import { FieldType, IPoint, ISingleHostConfig } from "influx";
 import { BatteryBroadcast }  from "ojousima.ruuvi_endpoints.ts"
+import { InfluxLogin }  from "../config"
 
 const login = new InfluxLogin();
 const measurementName = 'Battery';
@@ -11,16 +11,16 @@ export const BatteryOptions: ISingleHostConfig = {
   password: login.password,
   port: login.port,
   schema: [{
-    measurement: measurementName,
     fields: {
-      simpleVoltageV:            FieldType.FLOAT,
-      radioVoltageV:             FieldType.FLOAT,
       droopVoltageV:             FieldType.FLOAT,
-      temperatureC:              FieldType.FLOAT,
       humidityRH:                FieldType.FLOAT,
       measurementSequenceNumber: FieldType.INTEGER,
-      rssi:                      FieldType.INTEGER
+      radioVoltageV:             FieldType.FLOAT,
+      rssi:                      FieldType.INTEGER,
+      simpleVoltageV:            FieldType.FLOAT,
+      temperatureC:              FieldType.FLOAT,
     },
+    measurement: measurementName,
     tags: [
      'gatewayID',
      'address'
@@ -31,8 +31,7 @@ export const BatteryOptions: ISingleHostConfig = {
 
 export function BroadcastToInflux(broadcast: BatteryBroadcast): IPoint
 {
-  let data: IPoint = {
-    measurement: measurementName,
+  const data: IPoint = {
     fields: {
       droopVoltageV: broadcast.droopVoltageV,
       humidityRH: broadcast.humidityRh,
@@ -41,6 +40,7 @@ export function BroadcastToInflux(broadcast: BatteryBroadcast): IPoint
       simpleVoltageV: broadcast.simpleVoltageV,
       temperatureC: broadcast.temperatureC
     },
+    measurement: measurementName,
     tags: {
 
     }
