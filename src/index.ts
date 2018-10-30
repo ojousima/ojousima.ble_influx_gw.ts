@@ -9,18 +9,17 @@ const batteryDB = new Influx(BatteryOptions);
 batteryDB.getDatabaseNames().then(names => {
   const dbname: string = BatteryOptions.database ? BatteryOptions.database : 'misc';
   if (0 > names.indexOf(dbname)) {
-    batteryDB.createDatabase(dbname).then(value => {
-      Noble.startScanning([], true);
-    });
-  } else {
-    Noble.startScanning([], true);
-  }
+    return batteryDB.createDatabase(dbname); 
+  } 
 });
 
 // Setup scanning
 Noble.on('stateChange', state => {
   if (state !== 'poweredOn') {
     Noble.stopScanning();
+  } 
+  else {
+    Noble.startScanning([], true); 
   }
 });
 
@@ -35,13 +34,16 @@ Noble.on('discover', peripheral => {
   const rssi = peripheral.rssi;
   const timestamp = Date.now();
 
+  if(undefined == manufacturerData) { return; }
+
   // Parse manufacturer ID
-  const view = new DataView(advertisement.manufacturerData.buffer);
+  const view = new DataView(manufacturerData.buffer);
   const manufacturerID = view.getUint16(0, true);
 
   // If ID is Ruuvi Innovations 0x0499
   if (0x0499 === manufacturerID) {
     const data: Uint8Array = Uint8Array.from(peripheral.advertisement.manufacturerData.slice(2));
+
     // If data is battery data
     if (0xba === data[0]) {
       try {
@@ -54,11 +56,11 @@ Noble.on('discover', peripheral => {
           sample.fields = {};
         }
         sample.tags.gatewayID = os.hostname();
-        sample.tags.hostname = id;
+        sample.tags.address = id;
         sample.fields.rssi = rssi;
         const tx: IPoint[] = [sample];
         batteryDB.writePoints(tx);
-      } catch (e) {}
+      } catch (e) {console.log(e);}
     }
   }
 });

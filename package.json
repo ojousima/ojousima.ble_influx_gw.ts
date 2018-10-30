@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "dependencies": {
+    "@types/debug": "0.0.31",
     "@types/noble": "0.0.37",
     "influx": "^5.0.7",
     "noble": "github:ojousima/noble#fix-xpc",
