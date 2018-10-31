@@ -9,7 +9,11 @@ const batteryDB = new Influx(BatteryOptions);
 batteryDB.getDatabaseNames().then(names => {
   const dbname: string = BatteryOptions.database ? BatteryOptions.database : 'misc';
   if (0 > names.indexOf(dbname)) {
+    console.log("Creating DB");
     return batteryDB.createDatabase(dbname);
+  }
+  else{
+    console.log("DB already exists");
   }
 });
 
@@ -34,19 +38,20 @@ Noble.on('discover', peripheral => {
   const timestamp = Date.now();
 
   if (undefined === manufacturerData) {
+   // console.log("No manufacturer data");
+   // console.log(JSON.stringify(advertisement));
     return;
   }
-
   // Parse manufacturer ID
-  const view = new DataView(manufacturerData.buffer);
-  const manufacturerID = view.getUint16(0, true);
+  const manufacturerID: Uint8Array = Uint8Array.from(advertisement.manufacturerData.slice(0, 2));
 
   // If ID is Ruuvi Innovations 0x0499
-  if (0x0499 === manufacturerID) {
+  if (manufacturerID[0] === 0x99 && manufacturerID[1] === 0x04) {
     const data: Uint8Array = Uint8Array.from(peripheral.advertisement.manufacturerData.slice(2));
-
+    //console.log("Ruuvi data");
     // If data is battery data
     if (0xba === data[0]) {
+      //console.log("Battery data");
       try {
         const BatteryData: BatteryBroadcast = dfbaparser(data);
         const sample: IPoint = BroadcastToInflux(BatteryData);

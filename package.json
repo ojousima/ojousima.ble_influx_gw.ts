@@ -6,14 +6,14 @@
   "types": "lib/index.d.ts",
   "dependencies": {
     "@types/debug": "0.0.31",
-    "@types/noble": "0.0.37",
     "influx": "^5.0.7",
-    "noble": "github:ojousima/noble#fix-xpc",
+    "noble": "^1.9.1",
     "ojousima.ruuvi_endpoints.ts": "^3.2.1",
     "os": "^0.1.1"
   },
   "devDependencies": {
     "@types/jest": "^23.3.8",
+    "@types/noble": "0.0.37",
     "jest": "^23.6.0",
     "prettier": "^1.14.3",
     "ts-jest": "^23.10.4",
