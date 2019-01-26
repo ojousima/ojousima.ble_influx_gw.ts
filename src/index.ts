@@ -49,12 +49,13 @@ Noble.on('discover', peripheral => {
 
   // Parse manufacturer ID
   const view = new DataView(manufacturerData.buffer);
-  const manufacturerID = view.getUint16(0, true);
+  // Parse manufacturer ID
+  const manufacturerID: Uint8Array = Uint8Array.from(advertisement.manufacturerData.slice(0, 2));
 
   // If ID is Ruuvi Innovations 0x0499
-  if (0x0499 === manufacturerID) {
+  if (manufacturerID[0] === 0x99 && manufacturerID[1] === 0x04) {
     const data: Uint8Array = Uint8Array.from(peripheral.advertisement.manufacturerData.slice(2));
-
+    //console.log("R");
     // If data is acceleration data
     if (0xac === data[0]) {
       try {
@@ -70,7 +71,8 @@ Noble.on('discover', peripheral => {
         sample.tags.address = id;
         sample.fields.rssi = rssi;
         const tx: IPoint[] = [sample];
-        batteryDB.writePoints(tx);
+        accelerationDB.writePoints(tx);
+        //console.log("a");
       } catch (e) {}
     }
 
