@@ -2,8 +2,8 @@ import { FieldType, InfluxDB as Influx, IPoint, ISingleHostConfig } from 'influx
 import * as Noble from 'noble';
 import { AccelerationBroadcast, BatteryBroadcast, dfacparser, dfbaparser } from 'ojousima.ruuvi_endpoints.ts';
 import * as os from 'os';
-import { AccelerationOptions, AccelerationBroadcastToInflux } from './accelerationdata';
-import { BatteryOptions, BatteryBroadcastToInflux } from './batterydata';
+import { AccelerationBroadcastToInflux, AccelerationOptions } from './accelerationdata';
+import { BatteryBroadcastToInflux, BatteryOptions } from './batterydata';
 
 // Setup database connection
 const batteryDB = new Influx(BatteryOptions);

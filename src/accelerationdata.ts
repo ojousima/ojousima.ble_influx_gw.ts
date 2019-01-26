@@ -13,18 +13,18 @@ export const AccelerationOptions: ISingleHostConfig = {
   schema: [
     {
       fields: {
+        batteryVoltageV: FieldType.FLOAT,
+        devXG: FieldType.FLOAT,
+        devYG: FieldType.FLOAT,
+        devZG: FieldType.FLOAT,
+        measurementSequenceNumber: FieldType.INTEGER,
         p2pXG: FieldType.FLOAT,
         p2pYG: FieldType.FLOAT,
         p2pZG: FieldType.FLOAT,
         rmsXG: FieldType.FLOAT,
         rmsYG: FieldType.FLOAT,
         rmsZG: FieldType.FLOAT,
-        devXG: FieldType.FLOAT,
-        devYG: FieldType.FLOAT,
-        devZG: FieldType.FLOAT,
         rssi: FieldType.INTEGER,
-        batteryVoltageV: FieldType.FLOAT,
-        measurementSequenceNumber: FieldType.INTEGER,
         version: FieldType.INTEGER
       },
       measurement: measurementName,
@@ -37,18 +37,18 @@ export const AccelerationOptions: ISingleHostConfig = {
 export function AccelerationBroadcastToInflux(broadcast: AccelerationBroadcast): IPoint {
   const data: IPoint = {
     fields: {
+        batteryVoltageV: broadcast.batteryVoltageV,
+        devXG: broadcast.devXG,
+        devYG: broadcast.devYG,
+        devZG: broadcast.devZG,
+        measurementSequenceNumber: broadcast.measurementSequence,
         p2pXG: broadcast.p2pXG,
         p2pYG: broadcast.p2pYG,
         p2pZG: broadcast.p2pZG,
         rmsXG: broadcast.rmsXG,
         rmsYG: broadcast.rmsYG,
         rmsZG: broadcast.rmsZG,
-        devXG: broadcast.devXG,
-        devYG: broadcast.devYG,
-        devZG: broadcast.devZG,
         rssi: broadcast.rssiDB,
-        batteryVoltageV: broadcast.batteryVoltageV,
-        measurementSequenceNumber: broadcast.measurementSequence,
         version: broadcast.version
     },
     measurement: measurementName,
