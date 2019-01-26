@@ -1,6 +1,6 @@
 import { IPoint } from 'influx';
 import { BatteryBroadcast } from 'ojousima.ruuvi_endpoints.ts';
-import { BroadcastToInflux } from '../batterydata';
+import { BatteryBroadcastToInflux } from '../batterydata';
 
 test('test_broadcastdata_assignment', () => {
   const broadcast: BatteryBroadcast = new BatteryBroadcast();
@@ -11,7 +11,7 @@ test('test_broadcastdata_assignment', () => {
   broadcast.measurementSequence = 5;
   broadcast.humidityRh = 20.36;
 
-  let data: IPoint = BroadcastToInflux(broadcast);
+  let data: IPoint = BatteryBroadcastToInflux(broadcast);
   expect(data.fields).toBeDefined();
   if (undefined === data.fields) {
     data.fields = {};
