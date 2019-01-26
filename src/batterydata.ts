@@ -28,7 +28,7 @@ export const BatteryOptions: ISingleHostConfig = {
   username: login.username,
 };
 
-export function BroadcastToInflux(broadcast: BatteryBroadcast): IPoint {
+export function BatteryBroadcastToInflux(broadcast: BatteryBroadcast): IPoint {
   const data: IPoint = {
     fields: {
       droopVoltageV: broadcast.droopVoltageV,

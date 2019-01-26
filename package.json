@@ -9,17 +9,17 @@
     "@types/noble": "0.0.37",
     "influx": "^5.0.7",
     "noble": "github:ojousima/noble#fix-xpc",
-    "ojousima.ruuvi_endpoints.ts": "^3.2.1",
+    "ojousima.ruuvi_endpoints.ts": "^3.5.2",
     "os": "^0.1.1"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.8",
+    "@types/jest": "^23.3.13",
     "jest": "^23.6.0",
-    "prettier": "^1.14.3",
-    "ts-jest": "^23.10.4",
-    "tslint": "^5.11.0",
-    "tslint-config-prettier": "^1.15.0",
-    "typescript": "^3.1.4"
+    "prettier": "^1.16.1",
+    "ts-jest": "^23.10.5",
+    "tslint": "^5.12.1",
+    "tslint-config-prettier": "^1.17.0",
+    "typescript": "^3.2.4"
   },
   "scripts": {
     "build": "tsc",
