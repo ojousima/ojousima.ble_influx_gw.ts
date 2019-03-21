@@ -73,7 +73,6 @@ Noble.on('discover', peripheral => {
   // If ID is Ruuvi Innovations 0x0499
   if (manufacturerID[0] === 0x99 && manufacturerID[1] === 0x04) {
     const data: Uint8Array = Uint8Array.from(peripheral.advertisement.manufacturerData.slice(2));
-    //console.log("R");
     // If data is acceleration data
     if (0xac === data[0]) {
       try {
