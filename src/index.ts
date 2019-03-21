@@ -89,7 +89,7 @@ Noble.on('discover', peripheral => {
         sample.fields.rssi = rssi;
         const tx: IPoint[] = [sample];
         accelerationDB.writePoints(tx);
-      } catch (e) {}
+      } catch (e) { console.log(e);}
     }
 
     // If data is battery data
@@ -108,7 +108,7 @@ Noble.on('discover', peripheral => {
         sample.fields.rssi = rssi;
         const tx: IPoint[] = [sample];
         batteryDB.writePoints(tx);
-      } catch (e) {}
+      } catch (e) { console.log(e);}
     }
 
     // If data is Ruuvi DF5 data
@@ -149,4 +149,9 @@ Noble.on('discover', peripheral => {
       } catch (e) {}
     }
   }
+});
+
+process.on('unhandledRejection', error => {
+  console.log('unhandledRejection', error.message);
+  process.exit(1);
 });
