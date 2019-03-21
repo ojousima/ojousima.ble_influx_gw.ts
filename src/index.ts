@@ -47,6 +47,7 @@ Noble.on('stateChange', state => {
     Noble.stopScanning();
   } else {
     Noble.startScanning([], true);
+    console.log("scan started");
   }
 });
 
@@ -124,10 +125,10 @@ Noble.on('discover', peripheral => {
         }
         sample.tags.gatewayID = os.hostname();
         sample.tags.address = id;
-        sample.fields.rssi = rssi;
+        sample.fields.rssiDB = rssi;
         const tx: IPoint[] = [sample];
         ruuviDB.writePoints(tx);
-      } catch (e) {}
+      } catch (e) { console.log(e); }
     }
 
     // If data is Ruuvi DF3 data
@@ -143,10 +144,10 @@ Noble.on('discover', peripheral => {
         }
         sample.tags.gatewayID = os.hostname();
         sample.tags.address = id;
-        sample.fields.rssi = rssi;
+        sample.fields.rssiDB = rssi;
         const tx: IPoint[] = [sample];
         ruuviDB.writePoints(tx);
-      } catch (e) {}
+      } catch (e) { console.log(e); }
     }
   }
 });
