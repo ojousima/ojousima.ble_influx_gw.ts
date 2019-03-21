@@ -1,9 +1,10 @@
 import { FieldType, InfluxDB as Influx, IPoint, ISingleHostConfig } from 'influx';
 import * as Noble from 'noble';
-import { AccelerationBroadcast, BatteryBroadcast, dfacparser, dfbaparser } from 'ojousima.ruuvi_endpoints.ts';
+import { AccelerationBroadcast, BatteryBroadcast, df3parser, df5parser, dfacparser, dfbaparser, RuuviTagBroadcast } from 'ojousima.ruuvi_endpoints.ts';
 import * as os from 'os';
 import { AccelerationBroadcastToInflux, AccelerationOptions } from './accelerationdata';
 import { BatteryBroadcastToInflux, BatteryOptions } from './batterydata';
+import { RuuviOptions, RuuviTagBroadcastToInflux } from './ruuvidata';
 
 // Setup database connection
 const batteryDB = new Influx(BatteryOptions);
@@ -16,10 +17,19 @@ batteryDB.getDatabaseNames().then(names => {
 
 // Setup database connection
 const accelerationDB = new Influx(AccelerationOptions);
-batteryDB.getDatabaseNames().then(names => {
+accelerationDB.getDatabaseNames().then(names => {
   const dbname: string = AccelerationOptions.database ? AccelerationOptions.database : 'misc';
   if (0 > names.indexOf(dbname)) {
     return accelerationDB.createDatabase(dbname);
+  }
+});
+
+// Setup database connection
+const ruuviDB = new Influx(RuuviOptions);
+ruuviDB.getDatabaseNames().then(names => {
+  const dbname: string = RuuviOptions.database ? AccelerationOptions.database : 'misc';
+  if (0 > names.indexOf(dbname)) {
+    return ruuviDB.createDatabase(dbname);
   }
 });
 
@@ -70,7 +80,7 @@ Noble.on('discover', peripheral => {
         sample.tags.address = id;
         sample.fields.rssi = rssi;
         const tx: IPoint[] = [sample];
-        batteryDB.writePoints(tx);
+        accelerationDB.writePoints(tx);
       } catch (e) {}
     }
 
@@ -90,6 +100,46 @@ Noble.on('discover', peripheral => {
         sample.fields.rssi = rssi;
         const tx: IPoint[] = [sample];
         batteryDB.writePoints(tx);
+      } catch (e) {}
+    }
+
+    // If data is Ruuvi DF5 data
+    if(0x05 === data[0])
+    {
+      try {
+        const RuuviData: RuuviTagBroadcast = df5parser(data);
+        const sample: IPoint = RuuviTagBroadcastToInflux(RuuviData);
+        if (undefined === sample.tags) {
+          sample.tags = {};
+        }
+        if (undefined === sample.fields) {
+          sample.fields = {};
+        }
+        sample.tags.gatewayID = os.hostname();
+        sample.tags.address = id;
+        sample.fields.rssi = rssi;
+        const tx: IPoint[] = [sample];
+        ruuviDB.writePoints(tx);
+      } catch (e) {}
+    }
+
+    // If data is Ruuvi DF3 data
+    if(0x03 === data[0])
+    {
+      try {
+        const RuuviData: RuuviTagBroadcast = df3parser(data);
+        const sample: IPoint = RuuviTagBroadcastToInflux(RuuviData);
+        if (undefined === sample.tags) {
+          sample.tags = {};
+        }
+        if (undefined === sample.fields) {
+          sample.fields = {};
+        }
+        sample.tags.gatewayID = os.hostname();
+        sample.tags.address = id;
+        sample.fields.rssi = rssi;
+        const tx: IPoint[] = [sample];
+        ruuviDB.writePoints(tx);
       } catch (e) {}
     }
   }
