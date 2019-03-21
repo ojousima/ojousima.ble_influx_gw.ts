@@ -23,7 +23,7 @@ export const RuuviOptions: ISingleHostConfig = {
         pressurePa: FieldType.FLOAT,
         rssiDB: FieldType.INTEGER,
         temperatureC: FieldType.FLOAT,
-        txPowerDBm: FieldType.INTEGER
+        txPowerDBm: FieldType.INTEGER,
       },
       measurement: measurementName,
       tags: ['address', 'gatewayID', 'dataFormat'],
@@ -45,7 +45,7 @@ export function RuuviTagBroadcastToInflux(broadcast: RuuviTagBroadcast): IPoint 
       pressurePa: broadcast.pressurePa,
       rssiDB: broadcast.rssiDB,
       temperatureC: broadcast.temperatureC,
-      txPowerDBm: broadcast.txPowerDBm
+      txPowerDBm: broadcast.txPowerDBm,
     },
     measurement: measurementName,
     tags: {},

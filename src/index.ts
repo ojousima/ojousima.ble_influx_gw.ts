@@ -1,6 +1,14 @@
 import { FieldType, InfluxDB as Influx, IPoint, ISingleHostConfig } from 'influx';
 import * as Noble from 'noble';
-import { AccelerationBroadcast, BatteryBroadcast, df3parser, df5parser, dfacparser, dfbaparser, RuuviTagBroadcast } from 'ojousima.ruuvi_endpoints.ts';
+import {
+  AccelerationBroadcast,
+  BatteryBroadcast,
+  df3parser,
+  df5parser,
+  dfacparser,
+  dfbaparser,
+  RuuviTagBroadcast,
+} from 'ojousima.ruuvi_endpoints.ts';
 import * as os from 'os';
 import { AccelerationBroadcastToInflux, AccelerationOptions } from './accelerationdata';
 import { BatteryBroadcastToInflux, BatteryOptions } from './batterydata';
@@ -104,8 +112,7 @@ Noble.on('discover', peripheral => {
     }
 
     // If data is Ruuvi DF5 data
-    if(0x05 === data[0])
-    {
+    if (0x05 === data[0]) {
       try {
         const RuuviData: RuuviTagBroadcast = df5parser(data);
         const sample: IPoint = RuuviTagBroadcastToInflux(RuuviData);
@@ -124,8 +131,7 @@ Noble.on('discover', peripheral => {
     }
 
     // If data is Ruuvi DF3 data
-    if(0x03 === data[0])
-    {
+    if (0x03 === data[0]) {
       try {
         const RuuviData: RuuviTagBroadcast = df3parser(data);
         const sample: IPoint = RuuviTagBroadcastToInflux(RuuviData);
