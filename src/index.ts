@@ -35,7 +35,7 @@ accelerationDB.getDatabaseNames().then(names => {
 // Setup database connection
 const ruuviDB = new Influx(RuuviOptions);
 ruuviDB.getDatabaseNames().then(names => {
-  const dbname: string = RuuviOptions.database ? AccelerationOptions.database : 'misc';
+  const dbname: string = RuuviOptions.database ? RuuviOptions.database : 'misc';
   if (0 > names.indexOf(dbname)) {
     return ruuviDB.createDatabase(dbname);
   }
