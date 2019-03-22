@@ -90,8 +90,8 @@ Noble.on('discover', peripheral => {
         sample.tags.dataformat = data[0].toString();
         const tx: IPoint[] = [sample];
         accelerationDB.writePoints(tx);
-      } catch (e) { 
-        console.error("${e} thrown"); 
+      } catch (e) {
+        console.error('${e} thrown');
       }
     }
 
@@ -112,8 +112,8 @@ Noble.on('discover', peripheral => {
         sample.tags.dataformat = data[0].toString();
         const tx: IPoint[] = [sample];
         batteryDB.writePoints(tx);
-      } catch (e) { 
-        console.error("${e} thrown"); 
+      } catch (e) {
+        console.error('${e} thrown');
       }
     }
 
@@ -134,8 +134,8 @@ Noble.on('discover', peripheral => {
         sample.tags.dataformat = data[0].toString();
         const tx: IPoint[] = [sample];
         ruuviDB.writePoints(tx);
-      } catch (e) { 
-        console.error("${e} thrown"); 
+      } catch (e) {
+        console.error('${e} thrown');
       }
     }
 
@@ -156,8 +156,8 @@ Noble.on('discover', peripheral => {
         sample.tags.dataformat = data[0].toString();
         const tx: IPoint[] = [sample];
         ruuviDB.writePoints(tx);
-      } catch (e) { 
-        console.error("${e} thrown"); 
+      } catch (e) {
+        console.error('${e} thrown');
       }
     }
   }
