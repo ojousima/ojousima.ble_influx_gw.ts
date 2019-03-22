@@ -1,6 +1,7 @@
 {
    "extends": ["tslint:recommended", "tslint-config-prettier"],
    "rules": {
-     "no-empty": [true, "allow-empty-catch"]
+     "no-empty": [true]
+     "no-console": [true, "log"]
    }
 }

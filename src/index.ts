@@ -13,6 +13,7 @@ import * as os from 'os';
 import { AccelerationBroadcastToInflux, AccelerationOptions } from './accelerationdata';
 import { BatteryBroadcastToInflux, BatteryOptions } from './batterydata';
 import { RuuviOptions, RuuviTagBroadcastToInflux } from './ruuvidata';
+var debug = require('debug')('http')
 
 // Setup database connection
 const batteryDB = new Influx(BatteryOptions);
@@ -47,7 +48,6 @@ Noble.on('stateChange', state => {
     Noble.stopScanning();
   } else {
     Noble.startScanning([], true);
-    console.log("scan started");
   }
 });
 
@@ -91,7 +91,9 @@ Noble.on('discover', peripheral => {
         sample.tags.dataformat = data[0].toString();
         const tx: IPoint[] = [sample];
         accelerationDB.writePoints(tx);
-      } catch (e) { console.log(e); }
+      } catch (e) { 
+        console.error("${e} thrown"); 
+      }
     }
 
     // If data is battery data
@@ -111,7 +113,9 @@ Noble.on('discover', peripheral => {
         sample.tags.dataformat = data[0].toString();
         const tx: IPoint[] = [sample];
         batteryDB.writePoints(tx);
-      } catch (e) { console.log(e); }
+      } catch (e) { 
+        console.error("${e} thrown"); 
+      }
     }
 
     // If data is Ruuvi DF5 data
@@ -131,7 +135,9 @@ Noble.on('discover', peripheral => {
         sample.tags.dataformat = data[0].toString();
         const tx: IPoint[] = [sample];
         ruuviDB.writePoints(tx);
-      } catch (e) { console.log(e); }
+      } catch (e) { 
+        console.error("${e} thrown"); 
+      }
     }
 
     // If data is Ruuvi DF3 data
@@ -151,12 +157,14 @@ Noble.on('discover', peripheral => {
         sample.tags.dataformat = data[0].toString();
         const tx: IPoint[] = [sample];
         ruuviDB.writePoints(tx);
-      } catch (e) { console.log(e); }
+      } catch (e) { 
+        console.error("${e} thrown"); 
+      }
     }
   }
 });
 
 process.on('unhandledRejection', error => {
-  console.log('unhandledRejection', (error ? error : ""));
+  console.error('unhandledRejection ${e)';
   process.exit(1);
 });
