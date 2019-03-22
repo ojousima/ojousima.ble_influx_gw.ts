@@ -164,6 +164,6 @@ Noble.on('discover', peripheral => {
 });
 
 process.on('unhandledRejection', error => {
-  console.error('unhandledRejection ${e)';
+  console.error('unhandledRejection ${e)');
   process.exit(1);
 });
