@@ -13,7 +13,6 @@ import * as os from 'os';
 import { AccelerationBroadcastToInflux, AccelerationOptions } from './accelerationdata';
 import { BatteryBroadcastToInflux, BatteryOptions } from './batterydata';
 import { RuuviOptions, RuuviTagBroadcastToInflux } from './ruuvidata';
-var debug = require('debug')('http')
 
 // Setup database connection
 const batteryDB = new Influx(BatteryOptions);
