@@ -87,6 +87,7 @@ Noble.on('discover', peripheral => {
         sample.tags.gatewayID = os.hostname();
         sample.tags.address = id;
         sample.fields.rssi = rssi;
+        sample.tags.dataformat = data[0].toString();
         const tx: IPoint[] = [sample];
         accelerationDB.writePoints(tx);
       } catch (e) {}
@@ -106,6 +107,7 @@ Noble.on('discover', peripheral => {
         sample.tags.gatewayID = os.hostname();
         sample.tags.address = id;
         sample.fields.rssi = rssi;
+        sample.tags.dataformat = data[0].toString();
         const tx: IPoint[] = [sample];
         batteryDB.writePoints(tx);
       } catch (e) {}
@@ -124,6 +126,7 @@ Noble.on('discover', peripheral => {
         }
         sample.tags.gatewayID = os.hostname();
         sample.tags.address = id;
+        sample.tags.dataformat = data[0].toString();
         sample.fields.rssi = rssi;
         const tx: IPoint[] = [sample];
         ruuviDB.writePoints(tx);
@@ -144,6 +147,7 @@ Noble.on('discover', peripheral => {
         sample.tags.gatewayID = os.hostname();
         sample.tags.address = id;
         sample.fields.rssi = rssi;
+        sample.tags.dataformat = data[0].toString();
         const tx: IPoint[] = [sample];
         ruuviDB.writePoints(tx);
       } catch (e) {}
