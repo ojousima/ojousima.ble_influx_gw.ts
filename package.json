@@ -7,8 +7,9 @@
   "dependencies": {
     "@types/debug": "4.1.2",
     "@types/noble": "0.0.39",
+    "@types/noble-mac": "0.0.1",
     "influx": "^5.0.7",
-    "noble": "github:ojousima/noble#fix-xpc",
+    "noble-mac": "github:timeular/noble-mac",
     "ojousima.ruuvi_endpoints.ts": "^3.5.4",
     "os": "^0.1.1"
   },

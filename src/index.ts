@@ -1,5 +1,5 @@
 import { FieldType, InfluxDB as Influx, IPoint, ISingleHostConfig } from 'influx';
-import * as Noble from 'noble';
+import * as Noble from 'noble-mac';
 import {
   AccelerationBroadcast,
   BatteryBroadcast,
@@ -45,12 +45,15 @@ ruuviDB.getDatabaseNames().then(names => {
 Noble.on('stateChange', state => {
   if (state !== 'poweredOn') {
     Noble.stopScanning();
+    console.log("Scan stopped");
   } else {
     Noble.startScanning([], true);
+    console.log("Scan started");
   }
 });
 
 Noble.on('discover', peripheral => {
+  console.log("Discover");
   const advertisement = peripheral.advertisement;
   const id = peripheral.id;
   const localName = advertisement.localName;
@@ -120,6 +123,7 @@ Noble.on('discover', peripheral => {
     // If data is Ruuvi DF5 data
     if (0x05 === data[0]) {
       try {
+        console.log("Ruuvi");
         const RuuviData: RuuviTagBroadcast = df5parser(data);
         const sample: IPoint = RuuviTagBroadcastToInflux(RuuviData);
         if (undefined === sample.tags) {
