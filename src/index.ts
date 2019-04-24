@@ -1,4 +1,4 @@
-import { FieldType, InfluxDB as Influx, IPoint, ISingleHostConfig } from 'influx';
+import { FieldType, InfluxDB as Influx, IPoint, ISingleHostConfig, toNanoDate } from 'influx';
 import * as Noble from 'noble-mac';
 import {
   AccelerationBroadcast,
@@ -13,6 +13,30 @@ import * as os from 'os';
 import { AccelerationBroadcastToInflux, AccelerationOptions } from './accelerationdata';
 import { BatteryBroadcastToInflux, BatteryOptions } from './batterydata';
 import { RuuviOptions, RuuviTagBroadcastToInflux } from './ruuvidata';
+
+interface IQueue {
+    [key: string]: IPoint[];
+};
+let queue: IQueue = {};
+const batchSize: number = 2000;
+let last_flush: number = 0;
+// Batch points to be written,
+const queuePoint = function(db: string, sample: IPoint){
+  
+  if(!queue[db.toString()])
+  {
+    console.log(`Creating queue for ${db}`);
+    queue[db] = [];
+  }
+  const length = queue[db.toString()].push(sample);
+  if(length >= batchSize || (new Date).getTime() - last_flush > 10000)
+  {
+    ruuviDB.writePoints(queue[db.toString()]);
+    queue[db] = [];
+    console.log("Sending batch");
+    last_flush = (new Date).getTime();
+  }
+}
 
 // Setup database connection
 const batteryDB = new Influx(BatteryOptions);
@@ -45,15 +69,14 @@ ruuviDB.getDatabaseNames().then(names => {
 Noble.on('stateChange', state => {
   if (state !== 'poweredOn') {
     Noble.stopScanning();
-    console.log("Scan stopped");
+    // console.log("Scan stopped");
   } else {
     Noble.startScanning([], true);
-    console.log("Scan started");
+    // console.log("Scan started");
   }
 });
 
 Noble.on('discover', peripheral => {
-  console.log("Discover");
   const advertisement = peripheral.advertisement;
   const id = peripheral.id;
   const localName = advertisement.localName;
@@ -76,6 +99,7 @@ Noble.on('discover', peripheral => {
   // If ID is Ruuvi Innovations 0x0499
   if (manufacturerID[0] === 0x99 && manufacturerID[1] === 0x04) {
     const data: Uint8Array = Uint8Array.from(peripheral.advertisement.manufacturerData.slice(2));
+    const now = new Date().getTime();
     // If data is acceleration data
     if (0xac === data[0]) {
       try {
@@ -90,11 +114,12 @@ Noble.on('discover', peripheral => {
         sample.tags.gatewayID = os.hostname();
         sample.tags.address = id;
         sample.fields.rssi = rssi;
-        sample.tags.dataformat = data[0].toString();
+        sample.tags.dataFormat = data[0].toString();
+        sample.timestamp = toNanoDate((now * 1000000).toString()).getNanoTime();
         const tx: IPoint[] = [sample];
         accelerationDB.writePoints(tx);
       } catch (e) {
-        console.error('${e} thrown');
+        console.error(`${e} thrown`);
       }
     }
 
@@ -112,18 +137,18 @@ Noble.on('discover', peripheral => {
         sample.tags.gatewayID = os.hostname();
         sample.tags.address = id;
         sample.fields.rssi = rssi;
-        sample.tags.dataformat = data[0].toString();
+        sample.tags.dataFormat = data[0].toString();
+        sample.timestamp = toNanoDate((now * 1000000).toString()).getNanoTime();
         const tx: IPoint[] = [sample];
         batteryDB.writePoints(tx);
       } catch (e) {
-        console.error('${e} thrown');
+        console.error(`${e} thrown`);
       }
     }
 
     // If data is Ruuvi DF5 data
     if (0x05 === data[0]) {
       try {
-        console.log("Ruuvi");
         const RuuviData: RuuviTagBroadcast = df5parser(data);
         const sample: IPoint = RuuviTagBroadcastToInflux(RuuviData);
         if (undefined === sample.tags) {
@@ -133,13 +158,16 @@ Noble.on('discover', peripheral => {
           sample.fields = {};
         }
         sample.tags.gatewayID = os.hostname();
-        sample.tags.address = id;
+        sample.tags.address = RuuviData.mac ? RuuviData.mac.toString(16) : id;
+        sample.fields.mac = sample.tags.address;
         sample.fields.rssiDB = rssi;
-        sample.tags.dataformat = data[0].toString();
-        const tx: IPoint[] = [sample];
-        ruuviDB.writePoints(tx);
+        sample.tags.dataFormat = data[0].toString();
+        sample.timestamp = toNanoDate((now * 1000000).toString()).getNanoTime();
+        // const tx: IPoint[] = [sample];
+        const dbName: string = RuuviOptions.database ? RuuviOptions.database : "misc";
+        queuePoint(dbName, sample);
       } catch (e) {
-        console.error('${e} thrown');
+        console.error(`${e} thrown`);
       }
     }
 
@@ -157,17 +185,42 @@ Noble.on('discover', peripheral => {
         sample.tags.gatewayID = os.hostname();
         sample.tags.address = id;
         sample.fields.rssiDB = rssi;
-        sample.tags.dataformat = data[0].toString();
+        sample.tags.dataFormat = data[0].toString();
+        sample.timestamp = toNanoDate((now * 1000000).toString()).getNanoTime();
         const tx: IPoint[] = [sample];
-        ruuviDB.writePoints(tx);
+        const dbName: string = RuuviOptions.database ? RuuviOptions.database : "misc";
+        queuePoint(dbName, sample);
       } catch (e) {
-        console.error('${e} thrown');
+        console.error(`${e} thrown`);
+      }
+    }
+    // If data is Ruuvi DFFE data
+    if (0xFE === data[0]) {
+      try {
+        const RuuviData: RuuviTagBroadcast = dffeparser(data);
+        const sample: IPoint = RuuviTagBroadcastToInflux(RuuviData);
+        if (undefined === sample.tags) {
+          sample.tags = {};
+        }
+        if (undefined === sample.fields) {
+          sample.fields = {};
+        }
+        sample.tags.gatewayID = os.hostname();
+        sample.tags.address = id;
+        sample.fields.rssiDB = rssi;
+        sample.tags.dataFormat = data[0].toString();
+        sample.timestamp = toNanoDate((now * 1000000).toString()).getNanoTime();
+        const tx: IPoint[] = [sample];
+        const dbName: string = RuuviOptions.database ? RuuviOptions.database : "misc";
+        queuePoint(dbName, sample);
+      } catch (e) {
+        console.error(`${e} thrown`);
       }
     }
   }
 });
 
 process.on('unhandledRejection', error => {
-  console.error('unhandledRejection ${e)');
+  console.error(`${error} thrown`);
   process.exit(1);
 });

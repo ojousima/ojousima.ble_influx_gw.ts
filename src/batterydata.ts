@@ -22,7 +22,7 @@ export const BatteryOptions: ISingleHostConfig = {
         temperatureC: FieldType.FLOAT,
       },
       measurement: measurementName,
-      tags: ['gatewayID', 'address'],
+      tags: ['gatewayID', 'address', 'dataFormat'],
     },
   ],
   username: login.username,

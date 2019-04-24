@@ -24,6 +24,7 @@ export const RuuviOptions: ISingleHostConfig = {
         rssiDB: FieldType.INTEGER,
         temperatureC: FieldType.FLOAT,
         txPowerDBm: FieldType.INTEGER,
+        mac: FieldType.STRING
       },
       measurement: measurementName,
       tags: ['address', 'gatewayID', 'dataFormat'],

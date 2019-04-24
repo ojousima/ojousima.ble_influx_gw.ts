@@ -28,7 +28,7 @@ export const AccelerationOptions: ISingleHostConfig = {
         version: FieldType.INTEGER,
       },
       measurement: measurementName,
-      tags: ['gatewayID', 'address'],
+      tags: ['gatewayID', 'address', 'dataFormat'],
     },
   ],
   username: login.username,
