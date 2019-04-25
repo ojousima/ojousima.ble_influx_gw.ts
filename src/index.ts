@@ -7,12 +7,15 @@ import {
   df5parser,
   dfacparser,
   dfbaparser,
+  dffeparser,
+  dffeunencrypter,
   RuuviTagBroadcast,
 } from 'ojousima.ruuvi_endpoints.ts';
 import * as os from 'os';
 import { AccelerationBroadcastToInflux, AccelerationOptions } from './accelerationdata';
 import { BatteryBroadcastToInflux, BatteryOptions } from './batterydata';
 import { RuuviOptions, RuuviTagBroadcastToInflux } from './ruuvidata';
+import * as encoding from 'text-encoding';
 
 interface IQueue {
     [key: string]: IPoint[];
@@ -183,7 +186,7 @@ Noble.on('discover', peripheral => {
           sample.fields = {};
         }
         sample.tags.gatewayID = os.hostname();
-        sample.tags.address = id;
+        sample.tags.address = RuuviData.mac ? RuuviData.mac.toString(16) : id;
         sample.fields.rssiDB = rssi;
         sample.tags.dataFormat = data[0].toString();
         sample.timestamp = toNanoDate((now * 1000000).toString()).getNanoTime();
@@ -197,6 +200,20 @@ Noble.on('discover', peripheral => {
     // If data is Ruuvi DFFE data
     if (0xFE === data[0]) {
       try {
+        // xxx hack
+        let id_hack = "E696920D6C0F";
+        // console.log(Buffer.from(id_hack, 'hex'));
+        let base_key: Uint8Array = new Uint8Array(10);
+        base_key.set((new encoding.TextEncoder("ascii")).encode("ruuvi.com\0"));
+        base_key.set([0], 9);
+        // console.log(base_key);
+        const decryptedPayload: Uint8Array = dffeunencrypter(
+            data, 
+            base_key, 
+            Buffer.from(id_hack, 'hex'));
+        data.set(decryptedPayload, 2);
+        // console.log(decryptedPayload.toString());
+
         const RuuviData: RuuviTagBroadcast = dffeparser(data);
         const sample: IPoint = RuuviTagBroadcastToInflux(RuuviData);
         if (undefined === sample.tags) {
@@ -206,10 +223,11 @@ Noble.on('discover', peripheral => {
           sample.fields = {};
         }
         sample.tags.gatewayID = os.hostname();
-        sample.tags.address = id;
+        sample.tags.address = RuuviData.mac ? RuuviData.mac.toString(16) : id;
         sample.fields.rssiDB = rssi;
         sample.tags.dataFormat = data[0].toString();
         sample.timestamp = toNanoDate((now * 1000000).toString()).getNanoTime();
+        // console.log(RuuviData);
         const tx: IPoint[] = [sample];
         const dbName: string = RuuviOptions.database ? RuuviOptions.database : "misc";
         queuePoint(dbName, sample);

@@ -8,19 +8,21 @@
     "@types/debug": "4.1.2",
     "@types/noble": "0.0.39",
     "@types/noble-mac": "0.0.1",
+    "@types/text-encoding": "0.0.35",
     "influx": "^5.0.7",
     "noble-mac": "github:timeular/noble-mac",
-    "ojousima.ruuvi_endpoints.ts": "^3.5.4",
-    "os": "^0.1.1"
+    "ojousima.ruuvi_endpoints.ts": "^3.7.3",
+    "os": "^0.1.1",
+    "text-encoding": "^0.7.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.11",
-    "jest": "^24.5.0",
-    "prettier": "^1.16.4",
-    "ts-jest": "^24.0.0",
-    "tslint": "^5.14.0",
+    "jest": "^24.7.1",
+    "prettier": "^1.17.0",
+    "ts-jest": "^24.0.2",
+    "tslint": "^5.16.0",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.3.4000"
+    "typescript": "^3.4.5"
   },
   "scripts": {
     "build": "tsc",
