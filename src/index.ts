@@ -20,24 +20,24 @@ import * as encoding from 'text-encoding';
 interface IQueue {
     [key: string]: IPoint[];
 };
-let queue: IQueue = {};
+const queue: IQueue = {};
 const batchSize: number = 2000;
-let last_flush: number = 0;
+let lastFlush: number = 0;
 // Batch points to be written,
-const queuePoint = function(db: string, sample: IPoint){
+const queuePoint = db: string, sample: IPoint => {
   
   if(!queue[db.toString()])
   {
-    console.log(`Creating queue for ${db}`);
+    // console.log(`Creating queue for ${db}`);
     queue[db] = [];
   }
   const length = queue[db.toString()].push(sample);
-  if(length >= batchSize || (new Date).getTime() - last_flush > 10000)
+  if(length >= batchSize || (new Date).getTime() - lastFlush > 10000)
   {
     ruuviDB.writePoints(queue[db.toString()]);
     queue[db] = [];
-    console.log("Sending batch");
-    last_flush = (new Date).getTime();
+    // console.log("Sending batch");
+    lastFlush = (new Date).getTime();
   }
 }
 
@@ -203,13 +203,13 @@ Noble.on('discover', peripheral => {
         // xxx hack - use this on MAC / iOS
         // let id_hack = "E696920D6C0F";
         // console.log(Buffer.from(id_hack, 'hex'));
-        let base_key: Uint8Array = new Uint8Array(10);
-        base_key.set((new encoding.TextEncoder("ascii")).encode("ruuvi.com\0"));
-        base_key.set([0], 9);
+        const baseKey: Uint8Array = new Uint8Array(10);
+        baseKey.set((new encoding.TextEncoder("ascii")).encode("ruuvi.com\0"));
+        baseKey.set([0], 9);
         // console.log(base_key);
         const decryptedPayload: Uint8Array = dffeunencrypter(
             data, 
-            base_key, 
+            baseKey, 
             Buffer.from(id.replace(/:/g, ''), 'hex'));
         data.set(decryptedPayload, 2);
         // console.log(decryptedPayload.toString());

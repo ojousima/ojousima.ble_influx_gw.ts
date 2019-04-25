@@ -18,13 +18,13 @@ export const RuuviOptions: ISingleHostConfig = {
         accelerationZG: FieldType.FLOAT,
         batteryVoltageV: FieldType.FLOAT,
         humidityRh: FieldType.FLOAT,
+        mac: FieldType.STRING,
         measurementSequenceNumber: FieldType.INTEGER,
         movementCounter: FieldType.INTEGER,
         pressurePa: FieldType.FLOAT,
         rssiDB: FieldType.INTEGER,
         temperatureC: FieldType.FLOAT,
-        txPowerDBm: FieldType.INTEGER,
-        mac: FieldType.STRING
+        txPowerDBm: FieldType.INTEGER
       },
       measurement: measurementName,
       tags: ['address', 'gatewayID', 'dataFormat'],
