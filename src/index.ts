@@ -18,28 +18,25 @@ import { BatteryBroadcastToInflux, BatteryOptions } from './batterydata';
 import { RuuviOptions, RuuviTagBroadcastToInflux } from './ruuvidata';
 
 interface IQueue {
-    [key: string]: IPoint[];
-};
+  [key: string]: IPoint[];
+}
 const queue: IQueue = {};
 const batchSize: number = 2000;
 let lastFlush: number = 0;
 // Batch points to be written,
 const queuePoint = (db: string, sample: IPoint) => {
-  
-  if(!queue[db.toString()])
-  {
+  if (!queue[db.toString()]) {
     // console.log(`Creating queue for ${db}`);
     queue[db] = [];
   }
   const length = queue[db.toString()].push(sample);
-  if(length >= batchSize || (new Date).getTime() - lastFlush > 10000)
-  {
+  if (length >= batchSize || new Date().getTime() - lastFlush > 10000) {
     ruuviDB.writePoints(queue[db.toString()]);
     queue[db] = [];
     // console.log("Sending batch");
-    lastFlush = (new Date).getTime();
+    lastFlush = new Date().getTime();
   }
-}
+};
 
 // Setup database connection
 const batteryDB = new Influx(BatteryOptions);
@@ -167,7 +164,7 @@ Noble.on('discover', peripheral => {
         sample.tags.dataFormat = data[0].toString();
         sample.timestamp = toNanoDate((now * 1000000).toString()).getNanoTime();
         // const tx: IPoint[] = [sample];
-        const dbName: string = RuuviOptions.database ? RuuviOptions.database : "misc";
+        const dbName: string = RuuviOptions.database ? RuuviOptions.database : 'misc';
         queuePoint(dbName, sample);
       } catch (e) {
         console.error(`${e} thrown`);
@@ -191,26 +188,23 @@ Noble.on('discover', peripheral => {
         sample.tags.dataFormat = data[0].toString();
         sample.timestamp = toNanoDate((now * 1000000).toString()).getNanoTime();
         const tx: IPoint[] = [sample];
-        const dbName: string = RuuviOptions.database ? RuuviOptions.database : "misc";
+        const dbName: string = RuuviOptions.database ? RuuviOptions.database : 'misc';
         queuePoint(dbName, sample);
       } catch (e) {
         console.error(`${e} thrown`);
       }
     }
     // If data is Ruuvi DFFE data
-    if (0xFE === data[0]) {
+    if (0xfe === data[0]) {
       try {
         // xxx hack - use this on MAC / iOS
         // let id_hack = "E696920D6C0F";
         // console.log(Buffer.from(id_hack, 'hex'));
         const baseKey: Uint8Array = new Uint8Array(10);
-        baseKey.set((new encoding.TextEncoder("ascii")).encode("ruuvi.com\0"));
+        baseKey.set(new encoding.TextEncoder('ascii').encode('ruuvi.com\0'));
         baseKey.set([0], 9);
         // console.log(base_key);
-        const decryptedPayload: Uint8Array = dffeunencrypter(
-            data, 
-            baseKey, 
-            Buffer.from(id.replace(/:/g, ''), 'hex'));
+        const decryptedPayload: Uint8Array = dffeunencrypter(data, baseKey, Buffer.from(id.replace(/:/g, ''), 'hex'));
         data.set(decryptedPayload, 2);
         // console.log(decryptedPayload.toString());
 
@@ -229,7 +223,7 @@ Noble.on('discover', peripheral => {
         sample.timestamp = toNanoDate((now * 1000000).toString()).getNanoTime();
         // console.log(RuuviData);
         const tx: IPoint[] = [sample];
-        const dbName: string = RuuviOptions.database ? RuuviOptions.database : "misc";
+        const dbName: string = RuuviOptions.database ? RuuviOptions.database : 'misc';
         queuePoint(dbName, sample);
       } catch (e) {
         console.error(`${e} thrown`);
