@@ -200,8 +200,8 @@ Noble.on('discover', peripheral => {
     // If data is Ruuvi DFFE data
     if (0xFE === data[0]) {
       try {
-        // xxx hack
-        let id_hack = "E696920D6C0F";
+        // xxx hack - use this on MAC / iOS
+        // let id_hack = "E696920D6C0F";
         // console.log(Buffer.from(id_hack, 'hex'));
         let base_key: Uint8Array = new Uint8Array(10);
         base_key.set((new encoding.TextEncoder("ascii")).encode("ruuvi.com\0"));
@@ -210,7 +210,7 @@ Noble.on('discover', peripheral => {
         const decryptedPayload: Uint8Array = dffeunencrypter(
             data, 
             base_key, 
-            Buffer.from(id_hack, 'hex'));
+            Buffer.from(id.replace(/:/g, ''), 'hex'));
         data.set(decryptedPayload, 2);
         // console.log(decryptedPayload.toString());
 
