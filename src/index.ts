@@ -12,10 +12,10 @@ import {
   RuuviTagBroadcast,
 } from 'ojousima.ruuvi_endpoints.ts';
 import * as os from 'os';
+import * as encoding from 'text-encoding';
 import { AccelerationBroadcastToInflux, AccelerationOptions } from './accelerationdata';
 import { BatteryBroadcastToInflux, BatteryOptions } from './batterydata';
 import { RuuviOptions, RuuviTagBroadcastToInflux } from './ruuvidata';
-import * as encoding from 'text-encoding';
 
 interface IQueue {
     [key: string]: IPoint[];
@@ -24,7 +24,7 @@ const queue: IQueue = {};
 const batchSize: number = 2000;
 let lastFlush: number = 0;
 // Batch points to be written,
-const queuePoint = db: string, sample: IPoint => {
+const queuePoint = (db: string, sample: IPoint) => {
   
   if(!queue[db.toString()])
   {
