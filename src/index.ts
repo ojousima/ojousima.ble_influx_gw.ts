@@ -1,5 +1,5 @@
 import { FieldType, InfluxDB as Influx, IPoint, ISingleHostConfig, toNanoDate } from 'influx';
-import * as Noble from 'noble-mac';
+import * as Noble from 'noble';
 import {
   AccelerationBroadcast,
   BatteryBroadcast,
@@ -72,7 +72,7 @@ Noble.on('stateChange', state => {
     // console.log("Scan stopped");
   } else {
     Noble.startScanning([], true);
-    // console.log("Scan started");
+     console.log("Scan started");
   }
 });
 
@@ -118,13 +118,14 @@ Noble.on('discover', peripheral => {
         sample.timestamp = toNanoDate((now * 1000000).toString()).getNanoTime();
         const tx: IPoint[] = [sample];
         accelerationDB.writePoints(tx);
+        console.log("ac data");
       } catch (e) {
         console.error(`${e} thrown`);
       }
     }
 
     // If data is battery data
-    if (0xba === data[0]) {
+    else if (0xba === data[0]) {
       try {
         const BatteryData: BatteryBroadcast = dfbaparser(data);
         const sample: IPoint = BatteryBroadcastToInflux(BatteryData);
@@ -147,7 +148,7 @@ Noble.on('discover', peripheral => {
     }
 
     // If data is Ruuvi DF5 data
-    if (0x05 === data[0]) {
+    else if (0x05 === data[0]) {
       try {
         const RuuviData: RuuviTagBroadcast = df5parser(data);
         const sample: IPoint = RuuviTagBroadcastToInflux(RuuviData);
@@ -172,7 +173,7 @@ Noble.on('discover', peripheral => {
     }
 
     // If data is Ruuvi DF3 data
-    if (0x03 === data[0]) {
+    else if (0x03 === data[0]) {
       try {
         const RuuviData: RuuviTagBroadcast = df3parser(data);
         const sample: IPoint = RuuviTagBroadcastToInflux(RuuviData);
@@ -195,7 +196,7 @@ Noble.on('discover', peripheral => {
       }
     }
     // If data is Ruuvi DFFE data
-    if (0xfe === data[0]) {
+    else if (0xfe === data[0]) {
       try {
         // xxx hack - use this on MAC / iOS
         // let id_hack = "E696920D6C0F";
@@ -209,6 +210,30 @@ Noble.on('discover', peripheral => {
         // console.log(decryptedPayload.toString());
 
         const RuuviData: RuuviTagBroadcast = dffeparser(data);
+        const sample: IPoint = RuuviTagBroadcastToInflux(RuuviData);
+        if (undefined === sample.tags) {
+          sample.tags = {};
+        }
+        if (undefined === sample.fields) {
+          sample.fields = {};
+        }
+        sample.tags.gatewayID = os.hostname();
+        sample.tags.address = RuuviData.mac ? RuuviData.mac.toString(16) : id;
+        sample.fields.rssiDB = rssi;
+        sample.tags.dataFormat = data[0].toString();
+        sample.timestamp = toNanoDate((now * 1000000).toString()).getNanoTime();
+        // console.log(RuuviData);
+        const tx: IPoint[] = [sample];
+        const dbName: string = RuuviOptions.database ? RuuviOptions.database : 'misc';
+        queuePoint(dbName, sample);
+      } catch (e) {
+        console.error(`${e} thrown`);
+      }
+    }
+    // If data is unknown data
+    else {
+      try {
+        const RuuviData: RuuviTagBroadcast = dfxxparser(data);
         const sample: IPoint = RuuviTagBroadcastToInflux(RuuviData);
         if (undefined === sample.tags) {
           sample.tags = {};
