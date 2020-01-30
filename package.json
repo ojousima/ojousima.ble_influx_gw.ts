@@ -11,6 +11,7 @@
     "@types/text-encoding": "0.0.35",
     "influx": "^5.0.7",
     "noble-mac": "github:timeular/noble-mac",
+    "noble":"@abandonware/noble"
     "ojousima.ruuvi_endpoints.ts": "^3.7.3",
     "os": "^0.1.1",
     "text-encoding": "^0.7.0"
