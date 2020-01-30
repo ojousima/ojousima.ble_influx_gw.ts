@@ -9,6 +9,7 @@ import {
   dfbaparser,
   dffeparser,
   dffeunencrypter,
+  dfxxparser,
   RuuviTagBroadcast,
 } from 'ojousima.ruuvi_endpoints.ts';
 import * as os from 'os';

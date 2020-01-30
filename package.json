@@ -5,25 +5,24 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "dependencies": {
+    "@abandonware/noble": "^1.9.2-5",
     "@types/debug": "4.1.2",
     "@types/noble": "0.0.39",
     "@types/noble-mac": "0.0.1",
     "@types/text-encoding": "0.0.35",
-    "influx": "^5.0.7",
-    "noble-mac": "github:timeular/noble-mac",
-    "noble":"@abandonware/noble"
-    "ojousima.ruuvi_endpoints.ts": "^3.7.3",
+    "influx": "^5.5.1",
+    "ojousima.ruuvi_endpoints.ts": "^3.8.1",
     "os": "^0.1.1",
     "text-encoding": "^0.7.0"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.11",
-    "jest": "^24.7.1",
-    "prettier": "^1.17.0",
-    "ts-jest": "^24.0.2",
-    "tslint": "^5.16.0",
+    "@types/jest": "^24.9.1",
+    "jest": "^24.9.0",
+    "prettier": "^1.19.1",
+    "ts-jest": "^24.3.0",
+    "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.4.5"
+    "typescript": "^3.7.5"
   },
   "scripts": {
     "build": "tsc",
